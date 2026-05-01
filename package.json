@@ -1,0 +1,67 @@
+﻿{
+    "name":  "create-gicellbot",
+    "version":  "1.0.1",
+    "description":  "Scaffold a self-hosted AI voice bot for Free4Talk voice rooms",
+    "main":  "manager.js",
+    "bin":  {
+                "create-gicellbot":  "bin/create.js"
+            },
+    "scripts":  {
+                    "start":  "node manager.js",
+                    "setup":  "node setup-profile.js"
+                },
+    "files":  [
+                  "bin/",
+                  "ai.js",
+                  "commands.js",
+                  "economy.js",
+                  "fun_api.js",
+                  "manager.js",
+                  "server.js",
+                  "setup-profile.js",
+                  "stt.js",
+                  "tts.js",
+                  "voice.js",
+                  "plugins/",
+                  "public/",
+                  ".env.example",
+                  ".gitignore",
+                  "account.json",
+                  "roles.json",
+                  "gitignore"
+              ],
+    "keywords":  [
+                     "free4talk",
+                     "bot",
+                     "ai",
+                     "voice",
+                     "music",
+                     "whisper",
+                     "stt",
+                     "tts",
+                     "playwright"
+                 ],
+    "author":  "Gilang Raja (https://github.com/Gicelldev)",
+    "license":  "MIT",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "git+https://github.com/Gicelldev/free4talkbot.git"
+                   },
+    "homepage":  "https://github.com/Gicelldev/free4talkbot#readme",
+    "engines":  {
+                    "node":  "\u003e=18.0.0"
+                },
+    "dependencies":  {
+                         "bcryptjs":  "^3.0.3",
+                         "dotenv":  "^16.4.5",
+                         "express":  "^5.2.1",
+                         "express-rate-limit":  "^8.4.1",
+                         "express-session":  "^1.19.0",
+                         "genius-lyrics":  "^4.4.7",
+                         "msedge-tts":  "^2.0.5",
+                         "playwright":  "^1.57.0",
+                         "socket.io":  "^4.8.3",
+                         "youtube-dl-exec":  "^3.0.28",
+                         "yt-search":  "^2.13.1"
+                     }
+}

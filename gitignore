@@ -1,0 +1,17 @@
+# ── Runtime data (jangan push ke repo) ──
+node_modules/
+profile/
+profiles/
+ai_memory.json
+economy.json
+users.json
+roles.json
+.session_secret
+*.log
+
+# ── Credentials (JANGAN PERNAH commit!) ──
+.env
+
+# ── OS files ──
+.DS_Store
+Thumbs.db
