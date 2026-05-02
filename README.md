@@ -62,6 +62,7 @@ npm start
 - [Commands Reference](#commands-reference)
 - [Plugin System](#plugin-system)
 - [Troubleshooting](#troubleshooting)
+- [Changelog](#changelog)
 - [License](#license)
 
 ---
@@ -1119,6 +1120,40 @@ Guidelines:
 - Follow the existing log style: `log(message, 'info'|'success'|'warn'|'error')`
 - Run `node --check <file>.js` before submitting
 - Test with at least one real room join to confirm nothing breaks
+
+---
+
+## Changelog
+
+All notable changes are documented here. Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+---
+
+### [1.1.0] — 2026-05-02
+
+#### 🐛 Fixed
+- **Volume persistence between songs** (`commands.js`, `server.js`)  
+  `!vol` now correctly persists across song transitions. Previously, setting volume on the first song had no effect on subsequent tracks — each new song would reset to the default 10% volume. Root cause: `!vol` only updated `window._audioElement.volume` (the currently playing element) but did not update `window._botVolume`, which is the baseline value read when each new song starts. Fix: `!vol` now updates both, and `window._botVolume` is properly initialized in the audio pipeline startup script.
+
+---
+
+### [1.0.0] — 2026-05-01
+
+#### 🎉 Initial Release
+- Self-hosted AI voice bot for Free4Talk voice rooms
+- Real-time STT via Groq Whisper Large v3 with multi-key rotation
+- TTS via Microsoft Edge TTS (18+ voice options)
+- Wake word detection with 3-stage fuzzy matching (handles Whisper misrecognitions)
+- Talk Mode — bot responds to all utterances without wake word
+- Music streaming via yt-dlp directly into WebRTC sender track
+- 4-hour stream URL cache with background pre-fetch for next song
+- YouTube search with `yt-search`, full queue system
+- NVIDIA NIM AI chat (Qwen 3.5 122B) with per-user memory
+- Economy & RPG system (coins, XP, levels, inventory, gacha)
+- Plugin system — drop `.js` files into `plugins/` to add commands
+- Web dashboard via Express + Socket.IO
+- `npx create-gicellbot <name>` CLI scaffolding
+- Published to npm as [`create-gicellbot`](https://www.npmjs.com/package/create-gicellbot)
 
 ---
 

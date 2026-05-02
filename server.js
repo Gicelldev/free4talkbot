@@ -1088,6 +1088,7 @@ async function startBot(config) {
             window._audioElement.crossOrigin = 'anonymous';
             window._audioElement.autoplay    = true;
             window._audioElement.volume      = 0.1;  // default 10%
+            window._botVolume              = 0.1;  // baseline — diupdate saat !vol dipakai
 
             const source = window._audioCtx.createMediaElementSource(window._audioElement);
             const dest   = window._audioCtx.createMediaStreamDestination();

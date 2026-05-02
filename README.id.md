@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 # GicellBot
 
@@ -1090,6 +1090,41 @@ Guidelines:
 - Ikuti gaya log yang ada: `log(pesan, 'info'|'success'|'warn'|'error')`
 - Jalankan `node --check <file>.js` sebelum submit
 - Test dengan setidaknya satu join room beneran untuk konfirmasi tidak ada yang rusak
+
+---
+
+## Changelog
+
+Semua perubahan penting didokumentasikan di sini. Format mengacu pada [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+---
+
+### [1.1.0] — 2026-05-02
+
+#### 🐛 Perbaikan Bug
+- **Volume musik kini persisten antar lagu** (commands.js, server.js)  
+  !vol kini berfungsi dengan benar antar perpindahan lagu. Sebelumnya, mengatur volume di lagu pertama tidak berpengaruh ke lagu berikutnya — setiap lagu baru selalu reset ke volume default 10%. Penyebab: !vol hanya mengupdate window._audioElement.volume (elemen audio yang sedang diputar) tapi tidak mengupdate window._botVolume, yang merupakan nilai baseline yang dibaca saat setiap lagu baru dimulai. Fix: !vol kini mengupdate keduanya, dan window._botVolume diinisialisasi dengan benar di startup script audio pipeline.
+
+---
+
+### [1.0.0] — 2026-05-01
+
+#### 🎉 Rilis Perdana
+- Bot AI bersuara self-hosted untuk room Free4Talk
+- STT real-time via Groq Whisper Large v3 dengan rotasi multi-key
+- TTS via Microsoft Edge TTS (18+ pilihan suara)
+- Deteksi wake word 3-tahap dengan fuzzy matching (tahan terhadap miskognisi Whisper)
+- Talk Mode — bot merespons semua ucapan tanpa perlu wake word
+- Streaming musik via yt-dlp langsung ke WebRTC sender track
+- Cache URL stream 4 jam dengan pre-fetch background untuk lagu berikutnya
+- Pencarian YouTube dengan yt-search, sistem queue lengkap
+- AI chat NVIDIA NIM (Qwen 3.5 122B) dengan memori per-user
+- Sistem Ekonomi & RPG (koin, XP, level, inventori, gacha)
+- Sistem plugin — taruh file .js di plugins/ untuk tambah command
+- Dashboard web via Express + Socket.IO
+- CLI scaffolding 
+px create-gicellbot <nama>
+- Dipublikasikan ke npm sebagai [create-gicellbot](https://www.npmjs.com/package/create-gicellbot)
 
 ---
 

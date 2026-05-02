@@ -1,4 +1,4 @@
-const fs = require('fs');
+﻿const fs = require('fs');
 const path = require('path');
 const OLLAMA_API_KEY = '';
 const yts = require('yt-search');
@@ -6,8 +6,8 @@ const yts = require('yt-search');
 const economy = require('./economy.js');
 let userMap = new Map();
 
-// ── Time helpers ──────────────────────────────────────────────
-/** "3:45" or "1:23:45" → seconds */
+// â”€â”€ Time helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+/** "3:45" or "1:23:45" â†’ seconds */
 function parseDuration(ts) {
     if (!ts) return 0;
     const parts = String(ts).split(':').map(Number);
@@ -16,7 +16,7 @@ function parseDuration(ts) {
     return Number(parts[0]) || 0;
 }
 
-/** seconds → "m:ss" or "h:mm:ss" */
+/** seconds â†’ "m:ss" or "h:mm:ss" */
 function formatSec(s) {
     s = Math.max(0, Math.floor(s));
     const h = Math.floor(s / 3600);
@@ -26,10 +26,10 @@ function formatSec(s) {
     return `${m}:${String(sec).padStart(2, '0')}`;
 }
 
-/** 0.0-1.0 → [████░░░░░░] */
+/** 0.0-1.0 â†’ [â–ˆâ–ˆâ–ˆâ–ˆâ–‘â–‘â–‘â–‘â–‘â–‘] */
 function buildBar(progress, width = 12) {
     const filled = Math.round(Math.min(1, Math.max(0, progress)) * width);
-    return '[' + '█'.repeat(filled) + '░'.repeat(width - filled) + ']';
+    return '[' + 'â–ˆ'.repeat(filled) + 'â–‘'.repeat(width - filled) + ']';
 }
 
 const plugins = {};
@@ -62,7 +62,7 @@ function loadPlugins() {
                 }
                 process.stdout.write(`Loaded plugin: ${file}\n`);
             } catch (err) {
-                console.error(`❌ Failed to load plugin ${file}:`, err);
+                console.error(`âŒ Failed to load plugin ${file}:`, err);
             }
         }
     });
@@ -93,7 +93,7 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
         const plugin = plugins[pluginName];
 
         try {
-            console.log(`🔌 Plugin Command: ${cleanCmd}`);
+            console.log(`ðŸ”Œ Plugin Command: ${cleanCmd}`);
             const db = economy.loadEconomyDB();
             await plugin.handle(cleanCmd, args, msg, {
                 botState, sendMessage, addToQueue, log, updateStatus, page, sender, userMap, db,
@@ -102,13 +102,13 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
             return;
         } catch (error) {
             console.error(`Error executing plugin command ${cleanCmd}:`, error);
-            await sendMessage('❌ Terjadi kesalahan pada plugin.');
+            await sendMessage('âŒ Terjadi kesalahan pada plugin.');
             return;
         }
     }
 
     if (cmd === '!play' || cmd === '!p') {
-        if (!args) return await sendMessage('❓ Masukkan judul lagu. Contoh: !play lofi');
+        if (!args) return await sendMessage('â“ Masukkan judul lagu. Contoh: !play lofi');
 
         const choice = parseInt(args);
         if (!isNaN(choice) && botState.searchResults && botState.searchResults.length > 0) {
@@ -123,42 +123,42 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
         await addToQueue(args, sender.name);
     }
     else if (cmd === '!search') {
-        if (!args) return await sendMessage('❓ Masukkan judul lagu yang ingin dicari. Contoh: !search lofi');
+        if (!args) return await sendMessage('â“ Masukkan judul lagu yang ingin dicari. Contoh: !search lofi');
 
         log(`Searching for: "${args}"...`, 'info');
-        await sendMessage(`🔍 Mencari 10 hasil untuk: "${args}"...`);
+        await sendMessage(`ðŸ” Mencari 10 hasil untuk: "${args}"...`);
 
         try {
             const r = await yts(args);
             const videos = r.videos.slice(0, 10);
 
             if (videos.length === 0) {
-                return await sendMessage('❌ Tidak ditemukan hasil untuk pencarian tersebut.');
+                return await sendMessage('âŒ Tidak ditemukan hasil untuk pencarian tersebut.');
             }
 
             botState.searchResults = videos;
 
-            let response = `🔎 Hasil Pencarian untuk: "${args}"\n\n`;
+            let response = `ðŸ”Ž Hasil Pencarian untuk: "${args}"\n\n`;
             videos.forEach((v, i) => {
                 response += `${i + 1}. ${v.title} (${v.timestamp})\n`;
             });
-            response += `\n💡 Ketik !play [nomor] untuk memutar.`;
+            response += `\nðŸ’¡ Ketik !play [nomor] untuk memutar.`;
 
             await sendMessage(response.trim());
         } catch (e) {
             log('Search Error: ' + e.message, 'error');
-            await sendMessage('❌ Terjadi kesalahan saat mencari.');
+            await sendMessage('âŒ Terjadi kesalahan saat mencari.');
         }
     }
     else if (cmd === '!skip' || cmd === '!s') {
-        if (!botState.currentSong) return await sendMessage('❓ Tidak ada musik yang sedang diputar.');
+        if (!botState.currentSong) return await sendMessage('â“ Tidak ada musik yang sedang diputar.');
 
         const isRoomOwner = sender.role === 'Owner';
         const isRequester = botState.currentSong.requestedBy === sender.name;
 
         if (isRoomOwner || isRequester) {
             log(`Skipping... (by ${sender.name})`, 'cmd');
-            await sendMessage(`⏭ Skipping... (Requested by ${sender.name})`);
+            await sendMessage(`â­ Skipping... (Requested by ${sender.name})`);
             botState.isRepeating = false;
             // Stop audio segera supaya tidak overlap dengan lagu berikutnya
             botState.currentSong = null;
@@ -168,7 +168,7 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
             }).catch(() => { });
             await playNext();
         } else {
-            await sendMessage(`❌ Hanya pengirim lagu (${botState.currentSong.requestedBy}) atau Owner yang bisa skip.`);
+            await sendMessage(`âŒ Hanya pengirim lagu (${botState.currentSong.requestedBy}) atau Owner yang bisa skip.`);
         }
     }
     else if (cmd === '!stop') {
@@ -186,19 +186,19 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
             }).catch(() => { });
             log(`Stopped & Queue cleared (by ${sender.name}).`, 'warn');
             updateStatus();
-            await sendMessage(`⏹ Music stopped & Queue cleared by ${sender.name}.`);
+            await sendMessage(`â¹ Music stopped & Queue cleared by ${sender.name}.`);
         } else {
             const reqName = botState.currentSong ? botState.currentSong.requestedBy : 'pengirim';
-            await sendMessage(`❌ Hanya pengirim lagu (${reqName}) atau Owner yang bisa stop.`);
+            await sendMessage(`âŒ Hanya pengirim lagu (${reqName}) atau Owner yang bisa stop.`);
         }
     }
     else if (cmd === '!repeat' || cmd === '!r') {
         botState.isRepeating = !botState.isRepeating;
         updateStatus();
-        await sendMessage(botState.isRepeating ? '🔁 Repeat ON' : '🔁 Repeat OFF');
+        await sendMessage(botState.isRepeating ? 'ðŸ” Repeat ON' : 'ðŸ” Repeat OFF');
     }
     else if (cmd === '!np') {
-        if (!botState.currentSong) return await sendMessage('❓ Tidak ada musik yang diputar.');
+        if (!botState.currentSong) return await sendMessage('â“ Tidak ada musik yang diputar.');
 
         const s = botState.currentSong;
         let elapsed = 0, audioDur = 0;
@@ -218,13 +218,13 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
         const remaining = Math.max(0, totalSec - elapsed);
         const progress = totalSec > 0 ? elapsed / totalSec : 0;
 
-        let npMsg = `🎶 *${s.title}*\n`;
-        npMsg += `👤 Requested by: ${s.requestedBy}\n`;
+        let npMsg = `ðŸŽ¶ *${s.title}*\n`;
+        npMsg += `ðŸ‘¤ Requested by: ${s.requestedBy}\n`;
         if (totalSec > 0) {
             npMsg += `${buildBar(progress)} ${formatSec(elapsed)} / ${formatSec(totalSec)}\n`;
-            npMsg += `⏱️ Selesai dalam: ${formatSec(remaining)}`;
+            npMsg += `â±ï¸ Selesai dalam: ${formatSec(remaining)}`;
         } else {
-            npMsg += `⏱️ Durasi tidak tersedia`;
+            npMsg += `â±ï¸ Durasi tidak tersedia`;
         }
 
         await sendMessage(npMsg);
@@ -240,11 +240,11 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
         }
 
         if (!botState.currentSong && botState.queue.length === 0)
-            return await sendMessage('❓ Antrean kosong dan tidak ada musik yang diputar.');
+            return await sendMessage('â“ Antrean kosong dan tidak ada musik yang diputar.');
 
         let response = '';
 
-        // ── Now Playing ──
+        // â”€â”€ Now Playing â”€â”€
         if (botState.currentSong) {
             const s = botState.currentSong;
             const dur = parseDuration(s.duration);
@@ -252,12 +252,12 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
             const prog = dur > 0 ? elapsed / dur : 0;
             const durStr = s.duration ? ` (${s.duration})` : '';
             const barStr = dur > 0 ? `\n${buildBar(prog)} ${formatSec(elapsed)}/${formatSec(dur)}` : '';
-            const remStr = rem > 0 ? ` ⏱️ sisa ~${formatSec(rem)}` : '';
+            const remStr = rem > 0 ? ` â±ï¸ sisa ~${formatSec(rem)}` : '';
 
-            response += `🎶 *Now Playing*${durStr}${remStr}\n${s.title}\n👤 ${s.requestedBy}${barStr}`;
+            response += `ðŸŽ¶ *Now Playing*${durStr}${remStr}\n${s.title}\nðŸ‘¤ ${s.requestedBy}${barStr}`;
         }
 
-        // ── Antrean ──
+        // â”€â”€ Antrean â”€â”€
         if (botState.queue.length > 0) {
             const totalQueueSec = botState.queue.reduce((sum, s) => sum + parseDuration(s.duration), 0);
             const curRem = botState.currentSong
@@ -267,14 +267,14 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
 
             const list = botState.queue.map((s, i) => {
                 const d = s.duration ? ` (${s.duration})` : '';
-                return `${i + 1}. ${s.title}${d} — ${s.requestedBy}`;
+                return `${i + 1}. ${s.title}${d} â€” ${s.requestedBy}`;
             }).join('\n');
 
             const totalStr = totalQueueSec > 0 ? ` | total ${formatSec(totalQueueSec)}` : '';
-            response += `\n\n📝 Antrean (${botState.queue.length} lagu${totalStr}):\n${list}`;
+            response += `\n\nðŸ“ Antrean (${botState.queue.length} lagu${totalStr}):\n${list}`;
 
             if (totalWait > 0) {
-                response += `\n\n⏰ Estimasi semua selesai: ~${formatSec(totalWait)}`;
+                response += `\n\nâ° Estimasi semua selesai: ~${formatSec(totalWait)}`;
             }
         } else {
             response += '\n\n(Antrean berikutnya kosong)';
@@ -286,32 +286,35 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
         const n = parseInt(args, 10);
         if (isNaN(n)) {
             // Tampilkan volume saat ini
-            return await sendMessage(`🔊 Volume saat ini: ${botState.volume}%\nGunakan: !vol [1-100]`);
+            return await sendMessage(`ðŸ”Š Volume saat ini: ${botState.volume}%\nGunakan: !vol [1-100]`);
         }
 
-        const pct = Math.max(1, Math.min(100, n));   // clamp 1–100
-        const frac = pct / 100;                        // 0.01–1.0 untuk audio element
+        const pct = Math.max(1, Math.min(100, n));   // clamp 1â€“100
+        const frac = pct / 100;                        // 0.01â€“1.0 untuk audio element
 
         botState.volume = pct;  // simpan sebagai 1-100
         if (page) await page.evaluate(v => {
+            // Update elemen audio aktif (lagu sekarang)
             if (window._audioElement) window._audioElement.volume = v;
+            // Update baseline volume supaya lagu berikutnya tidak reset ke default
+            window._botVolume = v;
         }, frac);
         updateStatus();
-        await sendMessage(`🔊 Volume: ${pct}%`);
+        await sendMessage(`ðŸ”Š Volume: ${pct}%`);
     }
     else if (cmd === '!help') {
         const menu = [
-            `🎵 --- ${botState.botName.toUpperCase()} ---`,
-            '▶ !play [judul/nomor] - Putar musik',
-            '🔎 !search [judul] - Cari 10 lagu',
-            '⏭ !skip - Lewati lagu',
-            '🔁 !repeat - Ulangi lagu ini',
-            '⏹ !stop - Berhenti & hapus antrean',
-            '📝 !queue - Lihat daftar antrean',
-            '🎶 !np - Judul lagu sekarang',
-            '🔊 !vol [1-100]  - Atur volume (contoh: !vol 70)',
-            '🎤 !lirik - Cari lirik lagu sekarang',
-            '❓ !help - Menu bantuan'
+            `ðŸŽµ --- ${botState.botName.toUpperCase()} ---`,
+            'â–¶ !play [judul/nomor] - Putar musik',
+            'ðŸ”Ž !search [judul] - Cari 10 lagu',
+            'â­ !skip - Lewati lagu',
+            'ðŸ” !repeat - Ulangi lagu ini',
+            'â¹ !stop - Berhenti & hapus antrean',
+            'ðŸ“ !queue - Lihat daftar antrean',
+            'ðŸŽ¶ !np - Judul lagu sekarang',
+            'ðŸ”Š !vol [1-100]  - Atur volume (contoh: !vol 70)',
+            'ðŸŽ¤ !lirik - Cari lirik lagu sekarang',
+            'â“ !help - Menu bantuan'
         ].join('\n');
         await sendMessage(menu);
     }
@@ -322,7 +325,7 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
         }
 
         if (!query) {
-            return await sendMessage('❓ Putar lagu dulu atau ketik: !lirik [judul lagu]');
+            return await sendMessage('â“ Putar lagu dulu atau ketik: !lirik [judul lagu]');
         }
 
         // Bersihkan judul dari embel-embel YouTube
@@ -337,13 +340,13 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
             .replace(/\s{2,}/g, ' ')
             .trim();
 
-        // YouTube format: "Artist - Song Title" → split untuk lrclib
+        // YouTube format: "Artist - Song Title" â†’ split untuk lrclib
         const dashParts = cleanQuery.split(' - ').map(s => s.trim()).filter(Boolean);
         const ytArtist  = dashParts.length >= 2 ? dashParts[0] : '';
         const ytTrack   = dashParts.length >= 2 ? dashParts.slice(1).join(' - ') : cleanQuery;
 
         log(`Searching lyrics: "${ytTrack}" by "${ytArtist || '?'}" via lrclib.net...`, 'info');
-        await sendMessage(`🔍 Mencari lirik untuk: ${cleanQuery}...`);
+        await sendMessage(`ðŸ” Mencari lirik untuk: ${cleanQuery}...`);
 
         let lirik = '';
         try {
@@ -361,18 +364,18 @@ module.exports = async function handleCommand(msg, { botState, sendMessage, addT
             if (!hit)     hit = await tryLrc(cleanQuery, '');     // C: Full query
             if (hit) {
                 lirik = hit.plainLyrics;
-                log(`lrclib ✅ "${hit.trackName}" - ${hit.artistName}`, 'info');
+                log(`lrclib âœ… "${hit.trackName}" - ${hit.artistName}`, 'info');
             }
         } catch (e) {
             log('lrclib Error: ' + e.message, 'error');
         }
 
         if (!lirik || lirik.length < 20) {
-            return await sendMessage('❌ Gagal menemukan lirik untuk lagu ini.');
+            return await sendMessage('âŒ Gagal menemukan lirik untuk lagu ini.');
         }
 
         const lines = lirik.split('\n');
-        let currentChunk = `🎤 Lirik: ${cleanQuery}\n\n`;
+        let currentChunk = `ðŸŽ¤ Lirik: ${cleanQuery}\n\n`;
 
         for (const line of lines) {
             if ((currentChunk + line).length > 450) {
